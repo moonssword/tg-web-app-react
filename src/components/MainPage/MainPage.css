@@ -1,0 +1,30 @@
+/* MainPage.css */
+.main-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Полная высота экрана */
+    background-color: var(--tg-theme-bg-color); /* Используем переменную для фонового цвета */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: var(--tg-theme-text-color); /* Используем переменную для основного цвета текста */
+}
+
+.navigate-button {
+    background-color: var(--tg-theme-button-color); /* Используем переменную для цвета кнопки */
+    color: var(--tg-theme-button-text-color); /* Используем переменную для цвета текста на кнопке */
+    font-size: 16px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Легкая тень */
+}
+

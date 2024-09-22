@@ -1,0 +1,120 @@
+.form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 20px;
+    border-radius: 8px;
+    background-color: var(--tg-theme-bg-color, #f9f9f9); /* Цвет фона формы */
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Тень для формы */
+}
+
+h3 {
+    margin-bottom: 20px;
+    color: var(--tg-theme-text-color, #333); /* Цвет заголовка */
+    font-size: 24px; /* Размер шрифта заголовка */
+    text-align: left; /* Центрирование заголовка */
+}
+
+.form-row {
+    display: flex;
+    flex-direction: column; /* Располагаем метку сверху элемента */
+    margin-top: 15px;
+}
+
+.form-label {
+    margin-bottom: 5px; /* Отступ между меткой и полем */
+    color: var(--tg-theme-text-color, #333); /* Цвет текста заголовка */
+    font-size: 14px; /* Уменьшаем шрифт для метки */
+    font-weight: bold; /* Опционально, чтобы выделить метку */
+}
+
+.form-element {
+    width: 100%; /* Поля формы занимают всю ширину */
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc; /* Обводка поля */
+    border-radius: 4px; /* Закругление углов */
+    line-height: 34px;
+}
+
+.checkbox-label,
+.radio-label {
+    display: block;
+    margin-bottom: 5px;
+    color: var(--tg-theme-text-color, #555);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+    margin-right: 10px;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--tg-theme-button-color, #007bff); /* Цвет обводки при фокусе */
+    outline: none; /* Убираем стандартный контур */
+}
+
+.button-checkbox {
+    display: inline-block;
+    padding: 5px 10px;
+    margin: 2px;
+    border-radius: 4px;
+    border: 1px solid #007bff; /* Синяя рамка */
+    background-color: white;
+    color: #007bff;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.button-checkbox.active {
+    background-color: #007bff; /* Активный фон */
+    color: white; /* Цвет текста при активном состоянии */
+}
+
+.form_radio_group {
+	display: flex; /* Используем flexbox для распределения радиокнопок */
+	overflow: hidden;
+	width: 100%; /* Растягиваем контейнер на всю ширину */
+}
+
+.form_radio_group-item {
+	flex: 1; /* Равномерно распределяем кнопки по ширине */
+}
+
+.form_radio_group input[type=radio] {
+	display: none; /* Скрываем стандартные радиокнопки */
+}
+
+.form_radio_group label {
+	display: inline-block;
+	cursor: pointer;
+	line-height: 34px;
+	border: 1px solid #007bff;
+	border-right: none;
+	user-select: none; /* Отключаем выделение текста */
+	width: 100%; /* Растягиваем каждую кнопку на всю ширину контейнера */
+	text-align: center; /* Центрируем текст внутри кнопок */
+	white-space: normal; /* Разрешаем перенос текста */
+	word-wrap: break-word; /* Перенос слов, если они не помещаются */
+}
+
+.form_radio_group .form_radio_group-item:first-child label {
+	border-radius: 6px 0 0 6px;
+}
+
+.form_radio_group .form_radio_group-item:last-child label {
+	border-radius: 0 6px 6px 0;
+	border-right: 1px solid #007bff;
+}
+
+/* Стиль для выбранного радио */
+.form_radio_group input[type=radio]:checked + label {
+	background: #007bff;
+    color: white;
+}

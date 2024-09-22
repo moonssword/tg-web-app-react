@@ -1,0 +1,224 @@
+{
+    "address": {
+      "label": "Улица, дом",
+      "type": "text",
+      "required": true,
+      "placeholder": "Введите улицу и № дома"
+    },
+    "ad_type": {
+      "label": "Тип объявления",
+      "type": "radio",
+      "required": true,
+      "options": [
+        { "value": "rent", "label": "Аренда" },
+        { "value": "sale", "label": "Продажа" }
+      ]
+    },
+    "house_type": {
+      "label": "Тип жилья",
+      "type": "radio",
+      "required": true,
+      "options": [
+        { "value": "apartment", "label": "Квартира" },
+        { "value": "room", "label": "Комната" }
+      ]
+    },
+    "rooms": {
+      "label": "Количество комнат",
+      "type": "radio",
+      "required": true,
+      "options": [
+        { "value": 1, "label": "1" },
+        { "value": 2, "label": "2" },
+        { "value": 3, "label": "3" },
+        { "value": 4, "label": "4" },
+        { "value": 5, "label": "5+" }
+      ]
+    },
+    "room_type": {
+      "label": "Тип комнаты",
+      "type": "radio",
+      "depends_on": "house_type", 
+      "visible_if": "room",
+      "required": false,
+      "options": [
+        { "value": "room", "label": "Комната" },
+        { "value": "bed_space", "label": "Койко-место" }
+      ]
+    },
+    "room_location": {
+      "label": "Расположение комнаты",
+      "type": "radio",
+      "depends_on": "house_type",
+      "visible_if": "room",
+      "required": false,
+      "options": [
+        { "value": "apartment", "label": "Квартира" },
+        { "value": "hostel", "label": "Хостел" },
+        { "value": "hotel", "label": "Гостиница" }
+      ]
+    },
+    "room_area": {
+      "label": "Площадь комнаты (м²)",
+      "type": "number",
+      "depends_on": "house_type",
+      "visible_if": "room",
+      "required": false,
+      "placeholder": "Введите площадь комнаты"
+    },
+    "price": {
+      "label": "Цена",
+      "type": "number",
+      "required": true,
+      "placeholder": "Введите цену"
+    },
+    "currency": {
+      "label": "Валюта",
+      "type": "radio",
+      "options": [
+        { "value": "KZT", "label": "KZT" },
+        { "value": "USD", "label": "USD" },
+        { "value": "EUR", "label": "EUR" }
+      ]
+    },
+    "floor_current": {
+      "label": "Этаж",
+      "type": "number",
+      "required": true,
+      "placeholder": "Введите этаж"
+    },
+    "floor_total": {
+      "label": "Этажей всего",
+      "type": "number",
+      "required": true,
+      "placeholder": "Введите количество этажей"
+    },
+    "apartment_area": {
+      "label": "Площадь квартиры (м²)",
+      "type": "number",
+      "required": true,
+      "placeholder": "Введите площадь квартиры"
+    },
+    "phone": {
+      "label": "Телефон",
+      "type": "text",
+      "required": true,
+      "placeholder": "+7 777 777 77 77"
+    },
+    "communication_method": {
+      "label": "Способ связи",
+      "type": "checkbox",
+      "required": true,
+      "options": [
+        { "value": "call", "label": "Звонки" },
+        { "value": "telegram", "label": "Telegram" },
+        { "value": "whatsapp", "label": "WhatsApp" }
+      ]
+    },
+    "tg_username": {
+      "label": "Telegram",
+      "type": "text",
+      "depends_on": "telegram",
+      "visible_if": true,
+      "required": true,
+      "placeholder": "@"
+    },
+    "author": {
+      "label": "Автор объявления",
+      "type": "radio",
+      "required": true,
+      "options": [
+        { "value": "owner", "label": "Собственник" },
+        { "value": "agent", "label": "Посредник" }
+      ]
+    },
+    "description": {
+      "label": "Описание",
+      "type": "textarea",
+      "required": true,
+      "placeholder": "Введите описание"
+    },
+    "furniture": {
+      "label": "Мебель",
+      "type": "checkbox",
+      "options": [
+        { "value": "kitchen", "label": "Кухня" },
+        { "value": "wardrobe", "label": "Хранение одежды" },
+        { "value": "sleeping_places", "label": "Спальные места" }
+      ]
+    },
+    "separated_toilet": {
+      "label": "Санузел",
+      "type": "checkbox",
+      "options": [
+        { "value": "combined_toilet", "label": "Совмещённый" },
+        { "value": "separate_toilet", "label": "Раздельный" }
+      ]
+    },
+    "bathroom": {
+      "label": "Ванная комната",
+      "type": "checkbox",
+      "options": [
+        { "value": "bath", "label": "Ванная" },
+        { "value": "shower", "label": "Душевая кабина" }
+      ]
+    },
+    "technic": {
+      "label": "Техника",
+      "type": "checkbox",
+      "options": [
+        { "value": "air_conditioner", "label": "Кондиционер" },
+        { "value": "fridge", "label": "Холодильник" },
+        { "value": "stove", "label": "Плита" },
+        { "value": "microwave", "label": "Микроволновка" },
+        { "value": "washing_machine", "label": "Стиральная машина" },
+        { "value": "dishwasher", "label": "Посудомоечная машина" },
+        { "value": "tv", "label": "Телевизор" },
+        { "value": "iron", "label": "Утюг" }
+      ]
+    },
+    "internet_and_tv": {
+      "label": "Интернет и ТВ",
+      "type": "checkbox",
+      "options": [
+        { "value": "wifi", "label": "Wi-Fi" },
+        { "value": "television", "label": "Телевидение" }
+      ]
+    },
+    "max_guests": {
+      "label": "Максимум гостей",
+      "type": "radio",
+      "required": false,
+      "options": [
+        { "value": 1, "label": "1" },
+        { "value": 2, "label": "2" },
+        { "value": 3, "label": "3" },
+        { "value": 4, "label": "4" },
+        { "value": 5, "label": "5+" }
+      ]
+    },
+    "rental_options": {
+      "label": "Кому сдаётся",
+      "type": "checkbox",
+      "required": true,
+      "options": [
+        { "value": "family", "label": "Семейной паре" },
+        { "value": "single", "label": "Одному человеку" },
+        { "value": "with_child", "label": "Можно с детьми" },
+        { "value": "with_pets", "label": "Можно с животными" },
+        { "value": "smoke_allowed", "label": "Разрешено курить" }
+      ]
+    },
+    "apartment_condition": {
+      "label": "Ремонт:",
+      "type": "radio",
+      "required": true,
+      "options": [
+        { "value": "needs_renovation", "label": "Требуется" },
+        { "value": "cosmetic", "label": "Косметический" },
+        { "value": "euro", "label": "Евро" },
+        { "value": "designer", "label": "Дизайнерский" }
+      ]
+    }
+  }
+  
