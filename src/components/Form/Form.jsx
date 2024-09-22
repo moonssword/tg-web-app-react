@@ -128,11 +128,19 @@ const Form = () => {
         }
     
         // Валидация числовых полей, которые не могут быть отрицательными
-        if (['room_area', 'price', 'floor_current', 'floor_total', 'apartment_area'].includes(field) && value < 0) {
-            validatedValue = 0; // Заменяем отрицательные значения на 0
-            alert(`${formData[field].label} не может быть отрицательным`);
+        if (['room_area', 'price', 'floor_current', 'floor_total', 'apartment_area', 'phone'].includes(field)) {
+            // Проверка на числовое значение
+            if (isNaN(value) || value.trim() === '') {
+                alert(`${formData[field].label} должно быть числом`);
+                validatedValue = ''; // Или можете установить значение в null
+            } else if (value < 0) {
+                validatedValue = 0; // Заменяем отрицательные значения на 0
+                alert(`${formData[field].label} не может быть отрицательным`);
+            } else {
+                validatedValue = Number(value); // Преобразуем строку в число, если это корректное значение
+            }
         }
-    
+
         setFormValues((prevValues) => ({
             ...prevValues,
             [field]: validatedValue
@@ -144,7 +152,7 @@ const Form = () => {
     const renderField = (key, field) => {
 
         // Проверка зависимости от другого поля
-        if (field.depends_on && formValues[field.depends_on] !== field.visible_if ) {
+        if (field.depends_on && !field.visible_if.includes(formValues[field.depends_on])) {
             return null; // Возвращаем null, если условие не выполнено
         }
 
@@ -153,7 +161,7 @@ const Form = () => {
             case 'select':
                 fieldElement = (
                     <select
-                        className={'input'}
+                        className={'select'}
                         value={formValues[key] || ''}
                         onChange={(e) => onChangeField(key, e.target.value)}
                     >
@@ -192,18 +200,7 @@ const Form = () => {
                     />
                 );
                 break;                
-            /*case 'checkbox':
-                fieldElement = field.options && field.options.map(option => (
-                    <label key={option.value} className="checkbox-label">
-                        <input
-                            type="checkbox"
-                            checked={formValues[option.value] || false}
-                            onChange={(e) => onChangeField(option.value, e.target.checked)}
-                        />
-                        {option.label}
-                    </label>
-                ));
-                break;*/
+
             case 'checkbox':
                 fieldElement = field.options && field.options.map(option => (
                     <label 
@@ -220,20 +217,6 @@ const Form = () => {
                     </label>
                 ));
                 break;
-            /*case 'radio':
-                fieldElement = field.options && field.options.map(option => (
-                    <label key={option.value} className="radio-label">
-                        <input
-                            type="radio"
-                            name={key}
-                            value={option.value}
-                            checked={formValues[key] === option.value}
-                            onChange={(e) => onChangeField(key, option.value)}
-                        />
-                        {option.label}
-                    </label>
-                ));
-                break;*/
             case 'radio':
                 fieldElement = (
                     <div className="form_radio_group">
@@ -260,7 +243,7 @@ const Form = () => {
                 return null;
         }
 
-        if (key === "tg_username" && field.type === "text") {
+        if (key === "tg_username") {
             field.placeholder = `@${user?.username || ''}`; // Подставляем username
         }
 
@@ -279,44 +262,50 @@ const Form = () => {
             <h3>Новое объявление</h3>
             
             {/* Поле "Город" */}
-            <div className="form-row">
-                <div className="form-label">Город</div>
-                <div className="form-element">
-                    <select className={'select'} value={city} onChange={onChangeCity}>
-                        <option value="">Выберите город</option>
-                        {Object.keys(citiesData).map(cityName => (
-                            <option key={cityName} value={cityName}>{cityName}</option>
-                        ))}
-                    </select>
+            <div className="form-field">
+                <div className="form-row">
+                    <div className="form-label">Город</div>
+                    <div className="form-element">
+                        <select className="select" value={city} onChange={onChangeCity}>
+                            <option value="">Выберите город</option>
+                            {Object.keys(citiesData).map(cityName => (
+                                <option key={cityName} value={cityName}>{cityName}</option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
             </div>
 
             {/* Поле "Район" */}
             {city && (
-                <div className="form-row">
-                    <div className="form-label">Район</div>
-                    <div className="form-element">
-                        <select className={'select'} value={district} onChange={onChangeDistrict}>
-                            <option value="">Выберите район</option>
-                            {districts.map(districtName => (
-                                <option key={districtName} value={districtName}>{districtName}</option>
-                            ))}
-                        </select>
+                <div className="form-field">
+                    <div className="form-row">
+                        <div className="form-label">Район</div>
+                        <div className="form-element">
+                            <select className="select" value={district} onChange={onChangeDistrict}>
+                                <option value="">Выберите район</option>
+                                {districts.map(districtName => (
+                                    <option key={districtName} value={districtName}>{districtName}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
             )}
 
             {/* Поле "Микрорайон" */}
             {district && district !== "Все районы" && (
-                <div className="form-row">
-                    <div className="form-label">Микрорайон</div>
-                    <div className="form-element">
-                        <select className={'select'} value={microdistrict} onChange={onChangeMicrodistrict}>
-                            <option value="">Все микрорайоны</option>
-                            {microdistricts.map(microdistrictName => (
-                                <option key={microdistrictName} value={microdistrictName}>{microdistrictName}</option>
-                            ))}
-                        </select>
+                <div className="form-field">
+                    <div className="form-row">
+                        <div className="form-label">Микрорайон</div>
+                        <div className="form-element">
+                            <select className="select" value={microdistrict} onChange={onChangeMicrodistrict}>
+                                <option value="">Все микрорайоны</option>
+                                {microdistricts.map(microdistrictName => (
+                                    <option key={microdistrictName} value={microdistrictName}>{microdistrictName}</option>
+                                ))}
+                            </select>
+                        </div>
                     </div>
                 </div>
             )}
