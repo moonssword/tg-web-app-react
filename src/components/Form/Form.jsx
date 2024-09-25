@@ -11,7 +11,7 @@ const Form = () => {
     const [districts, setDistricts] = useState([]);
     const [microdistricts, setMicrodistricts] = useState([]);
     const [formValues, setFormValues] = useState({});
-    const { tg, user } = useTelegram();
+    const { tg, user, queryId } = useTelegram();
 
     const onSendData = useCallback(() => {
         // Проверка обязательных полей
@@ -27,7 +27,7 @@ const Form = () => {
         const errors = [];
     
         // Валидация поля description
-        if (formValues.description && formValues.description.length > 1024) {
+        /*if (formValues.description && formValues.description.length > 1024) {
             errors.push('Описание не должно содержать более 1024 знаков');
         }
     
@@ -43,7 +43,7 @@ const Form = () => {
         const phoneRegex = /^\+?\d{1,4}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
         if (!phoneRegex.test(formValues.phone)) {
             errors.push('Введите корректный номер телефона');
-        }
+        }*/
     
         // Валидация tg_username
         if (formValues.tg_username && formValues.tg_username.length > 20) {
@@ -55,15 +55,37 @@ const Form = () => {
             return;
         }
     
+        const urlParams = new URLSearchParams(window.location.search);
+        const chatId = urlParams.get('chat_id');
+
         const data = {
             city,
             district,
             microdistrict,
             ...formValues,
+            queryId,
+            chatId,
         };
+
+        fetch('https://1b4c1a59b0794e91265c9d3716739b32.serveo.net/web-data', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => console.log(data))
+        .catch(error => console.error('There has been a problem with your fetch operation:', error));
+        
     
         console.log(data)
-        tg.sendData(JSON.stringify(data));
+        //tg.sendData(JSON.stringify(data));
     }, [city, district, microdistrict, formValues]);
     
 
@@ -82,11 +104,11 @@ const Form = () => {
 
     useEffect(() => {
         // Проверяем, заполнены ли все необходимые поля
-        const isFormValid = city && district && formValues.address && formValues.ad_type && formValues.house_type && formValues.apartment_area
+        const isFormValid = city /*&& district && formValues.address && formValues.ad_type && formValues.house_type && formValues.apartment_area
                             && formValues.rooms && formValues.floor_current && formValues.floor_total && formValues.price && formValues.phone && formValues.author && formValues.description
                             && (formValues.call || formValues.telegram || formValues.whatsapp)
                             && (formValues.family || formValues.single || formValues.with_child  || formValues.with_pets || formValues.smoke_allowed)
-                            && formValues.apartment_condition != null;
+                            && formValues.apartment_condition != null;*/
     
         console.log(formValues)
         console.log(isFormValid)

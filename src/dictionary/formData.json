@@ -228,6 +228,17 @@
         { "value": "television", "label": "Телевидение" }
       ]
     },
+    "comfort": {
+      "label": "Комфорт",
+      "type": "checkbox",
+      "depends_on": "duration",
+      "visible_if": ["daily_rent"],
+      "options": [
+        { "value": "bed_linen", "label": "Постельное белье" },
+        { "value": "towels", "label": "Полотенца" },
+        { "value": "hygiene_items", "label": "Средства гигиены" }
+      ]
+    },
     "apartment_condition": {
       "label": "Ремонт:",
       "type": "radio",
@@ -251,8 +262,7 @@
         { "value": "family", "label": "Семейной паре" },
         { "value": "single", "label": "Одному человеку" },
         { "value": "with_child", "label": "Можно с детьми" },
-        { "value": "with_pets", "label": "Можно с животными" },
-        { "value": "smoke_allowed", "label": "Разрешено курить" }
+        { "value": "with_pets", "label": "Можно с животными" }
       ]
     },
     "max_guests": {

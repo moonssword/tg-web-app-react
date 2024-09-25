@@ -24,7 +24,7 @@ h3 {
 .form-label {
     margin-bottom: 5px; /* Отступ между меткой и полем */
     color: var(--tg-theme-text-color, #333); /* Цвет текста заголовка */
-    font-size: 14px; /* Уменьшаем шрифт для метки */
+
     font-weight: bold; /* Опционально, чтобы выделить метку */
 }
 
