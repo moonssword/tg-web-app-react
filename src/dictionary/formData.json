@@ -1,15 +1,10 @@
 {
-    "address": {
-      "label": "Улица, дом",
-      "type": "text",
-      "required": true,
-      "placeholder": "Введите улицу и № дома"
-    },
     "house_type": {
       "label": "Тип жилья",
       "type": "radio",
       "required": true,
       "options": [
+        { "value": "house", "label": "Дом" },
         { "value": "apartment", "label": "Квартира" },
         { "value": "room", "label": "Комната" }
       ]
@@ -17,19 +12,40 @@
     "ad_type": {
       "label": "Форма размещения",
       "type": "radio",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "required": true,
       "options": [
-        { "value": "sale", "label": "Продам" },
-        { "value": "rent", "label": "Сдам" }
+        { "value": "rentIn", "label": "Сниму" },
+        { "value": "rentOut", "label": "Сдам" }
       ]
+    },
+    "location": {
+      "label": "Местоположение",
+      "type": "custom",
+      "depends_on": ["house_type"], 
+      "visible_if": {"house_type" : ["apartment", "room", "house"]},
+      "required": true
+    },
+    "address": {
+      "label": "Улица, дом",
+      "type": "text",
+      "depends_on": ["ad_type"], 
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
+      "required": true,
+      "placeholder": "Введите улицу и № дома"
     },
     "duration": {
       "label": "Срок аренды ",
       "type": "radio",
-      "depends_on": "ad_type", 
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"], 
+      "visible_if": {
+        "ad_type": ["rentOut", "rentIn"]
+      },
       "required": true,
       "options": [
         { "value": "daily_rent", "label": "Посуточно" },
@@ -39,8 +55,10 @@
     "rooms": {
       "label": "Количество комнат",
       "type": "radio",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "required": true,
       "options": [
         { "value": 1, "label": "1" },
@@ -53,8 +71,10 @@
     "room_type": {
       "label": "Тип размещения",
       "type": "radio",
-      "depends_on": "house_type", 
-      "visible_if": ["room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["room"]
+      },
       "required": false,
       "options": [
         { "value": "room", "label": "Комната" },
@@ -64,8 +84,10 @@
     "room_location": {
       "label": "Расположение комнаты",
       "type": "radio",
-      "depends_on": "house_type",
-      "visible_if": ["room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["room"]
+      },
       "required": false,
       "options": [
         { "value": "apartment", "label": "Квартира" },
@@ -73,70 +95,123 @@
         { "value": "hotel", "label": "Гостиница" }
       ]
     },
-    "apartment_area": {
-      "label": "Площадь квартиры (м²)",
+    "bed_capacity": {
+      "label": "Количество спальных мест",
+      "type": "radio",
+      "depends_on": ["ad_type"], 
+      "visible_if": {
+        "ad_type": ["rentIn"]
+      },
+      "required": false,
+      "options": [
+        { "value": 1, "label": "1" },
+        { "value": 2, "label": "2" },
+        { "value": 3, "label": "3" },
+        { "value": 4, "label": "4" },
+        { "value": 5, "label": "5+" }
+      ]
+    },
+    "area": {
+      "label": "Площадь (м²)",
       "type": "number",
-      "depends_on": "house_type",
-      "visible_if": ["apartment"],
+      "depends_on": ["house_type", "ad_type"],
+      "visible_if": {
+        "house_type": ["apartment", "house"],
+        "ad_type": ["rentOut"]
+      },
       "required": true,
       "placeholder": "Введите площадь квартиры"
-    },
-    "room_area": {
-      "label": "Площадь комнаты (м²)",
-      "type": "number",
-      "depends_on": "house_type",
-      "visible_if": ["room"],
-      "required": false,
-      "placeholder": "Введите площадь комнаты"
     },
     "price": {
       "label": "Цена",
       "type": "number",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "required": true,
       "placeholder": "Введите цену"
     },
     "currency": {
       "label": "Валюта",
       "type": "radio",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "options": [
-        { "value": "KZT", "label": "KZT" },
-        { "value": "USD", "label": "USD" },
-        { "value": "EUR", "label": "EUR" }
+        { "value": "₸", "label": "KZT" },
+        { "value": "$", "label": "USD" },
+        { "value": "₽", "label": "EUR" }
+      ]
+    },
+    "deposit": {
+      "label": "Депозит",
+      "type": "radio",
+      "depends_on": ["ad_type"], 
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
+      "options": [
+        { "value": true, "label": "Да" },
+        { "value": false, "label": "Нет" }
+      ]
+    },
+    "deposit_value": {
+      "label": "Размер депозита (%)",
+      "type": "radio",
+      "depends_on": ["deposit"], 
+      "visible_if": {
+        "deposit": [true]
+    },
+      "options": [
+        { "value": "10", "label": "10" },
+        { "value": "20", "label": "20" },
+        { "value": "30", "label": "30" },
+        { "value": "40", "label": "40" },
+        { "value": "50", "label": "50" }
       ]
     },
     "floor_current": {
       "label": "Этаж",
       "type": "number",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type", "ad_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
+      },
       "required": true,
       "placeholder": "Введите этаж"
     },
     "floor_total": {
       "label": "Этажей всего",
       "type": "number",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type", "ad_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
+      },
       "required": true,
       "placeholder": "Введите количество этажей"
     },
     "phone": {
       "label": "Телефон",
       "type": "number",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "required": true,
       "placeholder": "+7 777 777 77 77"
     },
     "author": {
       "label": "Размещает объявление",
       "type": "radio",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type", "ad_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
+      },
       "required": true,
       "options": [
         { "value": "owner", "label": "Собственник" },
@@ -146,8 +221,10 @@
     "communication_method": {
       "label": "Способ связи",
       "type": "checkbox",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "required": true,
       "options": [
         { "value": "call", "label": "Звонки" },
@@ -158,24 +235,28 @@
     "tg_username": {
       "label": "Telegram",
       "type": "text",
-      "depends_on": "telegram",
-      "visible_if": [true],
+      "depends_on": ["telegram"],
+      "visible_if": {"telegram": [true]},
       "required": true,
-      "placeholder": "@"
+      "placeholder": ""
     },
     "description": {
       "label": "Описание",
       "type": "textarea",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["house_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"]
+      },
       "required": true,
       "placeholder": "Введите описание"
     },
     "furniture": {
       "label": "Мебель",
       "type": "checkbox",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
       "options": [
         { "value": "kitchen", "label": "Кухня" },
         { "value": "wardrobe", "label": "Хранение одежды" },
@@ -185,8 +266,10 @@
     "separated_toilet": {
       "label": "Санузел",
       "type": "checkbox",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
       "options": [
         { "value": "combined_toilet", "label": "Совмещённый" },
         { "value": "separate_toilet", "label": "Раздельный" }
@@ -195,8 +278,10 @@
     "bathroom": {
       "label": "Ванная комната",
       "type": "checkbox",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
       "options": [
         { "value": "bath", "label": "Ванная" },
         { "value": "shower", "label": "Душевая кабина" }
@@ -204,8 +289,10 @@
     },
     "technic": {
       "label": "Техника",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut", "rentIn"]
+      },
       "type": "checkbox",
       "options": [
         { "value": "air_conditioner", "label": "Кондиционер" },
@@ -221,8 +308,10 @@
     "internet_and_tv": {
       "label": "Интернет и ТВ",
       "type": "checkbox",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut", "rentIn"]
+      },
       "options": [
         { "value": "wifi", "label": "Wi-Fi" },
         { "value": "television", "label": "Телевидение" }
@@ -231,8 +320,10 @@
     "comfort": {
       "label": "Комфорт",
       "type": "checkbox",
-      "depends_on": "duration",
-      "visible_if": ["daily_rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
       "options": [
         { "value": "bed_linen", "label": "Постельное белье" },
         { "value": "towels", "label": "Полотенца" },
@@ -242,8 +333,10 @@
     "apartment_condition": {
       "label": "Ремонт:",
       "type": "radio",
-      "depends_on": "house_type", 
-      "visible_if": ["apartment", "room"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": []
+      },
       "required": true,
       "options": [
         { "value": "needs_renovation", "label": "Требуется" },
@@ -255,8 +348,10 @@
     "rental_options": {
       "label": "Правила заселения",
       "type": "checkbox",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut"]
+      },
       "required": true,
       "options": [
         { "value": "family", "label": "Семейной паре" },
@@ -268,8 +363,10 @@
     "max_guests": {
       "label": "Максимум гостей",
       "type": "radio",
-      "depends_on": "ad_type",
-      "visible_if": ["rent"],
+      "depends_on": ["ad_type"],
+      "visible_if": {
+        "ad_type": ["rentOut", "rentIn"]
+      },
       "required": false,
       "options": [
         { "value": 1, "label": "1" },

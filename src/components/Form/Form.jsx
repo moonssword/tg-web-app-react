@@ -104,7 +104,7 @@ const Form = () => {
 
     useEffect(() => {
         // Проверяем, заполнены ли все необходимые поля
-        const isFormValid = city /*&& district && formValues.address && formValues.ad_type && formValues.house_type && formValues.apartment_area
+        const isFormValid = city && district /*&& formValues.address && formValues.ad_type && formValues.house_type && formValues.apartment_area
                             && formValues.rooms && formValues.floor_current && formValues.floor_total && formValues.price && formValues.phone && formValues.author && formValues.description
                             && (formValues.call || formValues.telegram || formValues.whatsapp)
                             && (formValues.family || formValues.single || formValues.with_child  || formValues.with_pets || formValues.smoke_allowed)
@@ -174,11 +174,72 @@ const Form = () => {
     const renderField = (key, field) => {
 
         // Проверка зависимости от другого поля
-        if (field.depends_on && !field.visible_if.includes(formValues[field.depends_on])) {
-            return null; // Возвращаем null, если условие не выполнено
+        if (field.depends_on) {
+            const dependencies = Array.isArray(field.depends_on) ? field.depends_on : [field.depends_on];
+            const visibleIf = field.visible_if;
+    
+            const isFieldVisible = dependencies.every(depKey => {
+                const expectedValues = visibleIf[depKey] || [];
+                return expectedValues.includes(formValues[depKey]);
+            });
+    
+            if (!isFieldVisible) {
+                return null; // Если хотя бы одно из условий не выполнено, скрываем поле
+            }
         }
 
         let fieldElement;
+
+        // Проверка на кастомный тип поля
+        if (key === "location") {
+            return (
+                <div className="form-field" key={key}>
+                    {/* Поле "Город" */}
+                    <div className="form-row">
+                        <div className="form-label">Город</div>
+                        <div className="form-element">
+                            <select className="select" value={city} onChange={onChangeCity}>
+                                <option value="">Выберите город</option>
+                                {Object.keys(citiesData).map(cityName => (
+                                    <option key={cityName} value={cityName}>{cityName}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
+    
+                    {/* Поле "Район" */}
+                    {city && (
+                        <div className="form-row">
+                            <div className="form-label">Район</div>
+                            <div className="form-element">
+                                <select className="select" value={district} onChange={onChangeDistrict}>
+                                    <option value="">Выберите район</option>
+                                    {districts.map(districtName => (
+                                        <option key={districtName} value={districtName}>{districtName}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    )}
+    
+                    {/* Поле "Микрорайон" */}
+                    {district && district !== "Все районы" && microdistricts.length > 0 && (
+                        <div className="form-row">
+                            <div className="form-label">Микрорайон</div>
+                            <div className="form-element">
+                                <select className="select" value={microdistrict} onChange={onChangeMicrodistrict}>
+                                    <option value="">Выберите микрорайон</option>
+                                    {microdistricts.map(microdistrictName => (
+                                        <option key={microdistrictName} value={microdistrictName}>{microdistrictName}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        }
+        
         switch (field.type) {
             case 'select':
                 fieldElement = (
@@ -281,56 +342,7 @@ const Form = () => {
 
     return (
         <div className={"form"}>
-            <h3>Новое объявление</h3>
-            
-            {/* Поле "Город" */}
-            <div className="form-field">
-                <div className="form-row">
-                    <div className="form-label">Город</div>
-                    <div className="form-element">
-                        <select className="select" value={city} onChange={onChangeCity}>
-                            <option value="">Выберите город</option>
-                            {Object.keys(citiesData).map(cityName => (
-                                <option key={cityName} value={cityName}>{cityName}</option>
-                            ))}
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            {/* Поле "Район" */}
-            {city && (
-                <div className="form-field">
-                    <div className="form-row">
-                        <div className="form-label">Район</div>
-                        <div className="form-element">
-                            <select className="select" value={district} onChange={onChangeDistrict}>
-                                <option value="">Выберите район</option>
-                                {districts.map(districtName => (
-                                    <option key={districtName} value={districtName}>{districtName}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Поле "Микрорайон" */}
-            {district && district !== "Все районы" && (
-                <div className="form-field">
-                    <div className="form-row">
-                        <div className="form-label">Микрорайон</div>
-                        <div className="form-element">
-                            <select className="select" value={microdistrict} onChange={onChangeMicrodistrict}>
-                                <option value="">Все микрорайоны</option>
-                                {microdistricts.map(microdistrictName => (
-                                    <option key={microdistrictName} value={microdistrictName}>{microdistrictName}</option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-                </div>
-            )}
+        <h3>Новое объявление</h3>
 
             {/* Динамическая генерация дополнительных полей из JSON */}
             {Object.keys(formData).map((key) => {
