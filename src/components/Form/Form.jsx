@@ -3,6 +3,7 @@ import './Form.css';
 import { useTelegram } from '../../hooks/useTelegram';
 import citiesData from '../../dictionary/citiesData.json'; // Импортируем JSON файл
 import formData from '../../dictionary/formData.json';  // Дополнительные поля
+require('dotenv').config();
 
 const Form = () => {
     const [city, setCity] = useState('');
@@ -65,12 +66,14 @@ const Form = () => {
             ...formValues,
             queryId,
             chatId,
+            user,
         };
 
-        fetch('https://1b4c1a59b0794e91265c9d3716739b32.serveo.net/web-data', {
+        fetch(`https://${process.env.DOMAIN}/web-data`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'Accept': 'application/json',
             },
             body: JSON.stringify(data)
         })
@@ -104,11 +107,21 @@ const Form = () => {
 
     useEffect(() => {
         // Проверяем, заполнены ли все необходимые поля
-        const isFormValid = city && district /*&& formValues.address && formValues.ad_type && formValues.house_type && formValues.apartment_area
-                            && formValues.rooms && formValues.floor_current && formValues.floor_total && formValues.price && formValues.phone && formValues.author && formValues.description
-                            && (formValues.call || formValues.telegram || formValues.whatsapp)
-                            && (formValues.family || formValues.single || formValues.with_child  || formValues.with_pets || formValues.smoke_allowed)
-                            && formValues.apartment_condition != null;*/
+        const isFormValid = 
+        (formValues.ad_type === "rentIn" && formValues.house_type && city && formValues.price_min && formValues.price_max && formValues.duration
+            && ((formValues.house_type === 'apartment') ? formValues.rooms : true) && formValues.phone
+            )
+        ||
+        (formValues.ad_type === "rentOut" 
+            && city /*&& district && formValues.price 
+            && formValues.address && formValues.ad_type && formValues.house_type && formValues.area
+            && ((formValues.house_type === 'apartment') ? formValues.rooms : (formValues.room_type && formValues.room_location))
+            && (formValues.deposit ? formValues.deposit_value : true)
+            && formValues.floor_current && formValues.floor_total
+            && formValues.phone && formValues.author && formValues.description && formValues.duration
+            && (formValues.call || formValues.telegram || formValues.whatsapp)
+            && (formValues.family || formValues.single || formValues.with_child || formValues.with_pets)*/
+        );/*&& formValues.condition != null*/;
     
         console.log(formValues)
         console.log(isFormValid)
@@ -118,7 +131,7 @@ const Form = () => {
         } else {
             tg.MainButton.show();
         }
-    }, [city, district, formValues]);
+    }, [city, district, microdistrict, formValues]);
     
 
     const onChangeCity = (e) => {
@@ -144,13 +157,13 @@ const Form = () => {
         let validatedValue = value;
     
         // Валидация поля tg_username
-        if (field === 'tg_username' && value.length > 20) {
-            validatedValue = value.slice(0, 20); // Ограничиваем длину
-            alert('Telegram username не может содержать более 20 символов');
+        if (field === 'tg_username' && value.length > 32) {
+            validatedValue = value.slice(0, 32); // Ограничиваем длину
+            alert('Telegram username не может содержать более 32 символов');
         }
     
         // Валидация числовых полей, которые не могут быть отрицательными
-        if (['room_area', 'price', 'floor_current', 'floor_total', 'apartment_area', 'phone'].includes(field)) {
+        /*if (['price', 'floor_current', 'floor_total', 'area', 'phone'].includes(field)) {
             // Проверка на числовое значение
             if (isNaN(value) || value.trim() === '') {
                 alert(`${formData[field].label} должно быть числом`);
@@ -161,7 +174,7 @@ const Form = () => {
             } else {
                 validatedValue = Number(value); // Преобразуем строку в число, если это корректное значение
             }
-        }
+        }*/
 
         setFormValues((prevValues) => ({
             ...prevValues,
@@ -245,7 +258,7 @@ const Form = () => {
                 fieldElement = (
                     <select
                         className={'select'}
-                        value={formValues[key] || ''}
+                        value={formValues[key] || field.defaultValue || ''}
                         onChange={(e) => onChangeField(key, e.target.value)}
                     >
                         <option value="">{field.label}</option>
@@ -266,6 +279,7 @@ const Form = () => {
                         placeholder={field.placeholder}
                         value={formValues[key] || ''}
                         onChange={(e) => onChangeField(key, e.target.value)}
+                        pattern={field.pattern || ''}
                     />
                 );
                 break;
@@ -310,7 +324,7 @@ const Form = () => {
                                     id={`${key}_${option.value}`}
                                     name={key}
                                     value={option.value}
-                                    checked={formValues[key] === option.value}
+                                    checked={formValues[key] === option.value || field.defaultValue === option.value}
                                     onChange={(e) => onChangeField(key, option.value)}
                                     disabled={field.disabled || false} // поддержка disabled состояния
                                 />

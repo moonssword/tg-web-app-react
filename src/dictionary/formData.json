@@ -25,8 +25,11 @@
     "location": {
       "label": "Местоположение",
       "type": "custom",
-      "depends_on": ["house_type"], 
-      "visible_if": {"house_type" : ["apartment", "room", "house"]},
+      "depends_on": ["house_type", "ad_type"], 
+      "visible_if": {
+        "house_type" : ["apartment", "room", "house"],
+        "ad_type": ["rentIn", "rentOut"]
+      },
       "required": true
     },
     "address": {
@@ -55,9 +58,10 @@
     "rooms": {
       "label": "Количество комнат",
       "type": "radio",
-      "depends_on": ["house_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["apartment", "room", "house"]
+        "house_type": ["apartment"],
+        "ad_type": ["rentIn", "rentOut"]
       },
       "required": true,
       "options": [
@@ -71,11 +75,12 @@
     "room_type": {
       "label": "Тип размещения",
       "type": "radio",
-      "depends_on": ["house_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["room"]
+        "house_type": ["room"],
+        "ad_type": ["rentOut"]
       },
-      "required": false,
+      "required": true,
       "options": [
         { "value": "room", "label": "Комната" },
         { "value": "bed_space", "label": "Койко-место" }
@@ -84,11 +89,12 @@
     "room_location": {
       "label": "Расположение комнаты",
       "type": "radio",
-      "depends_on": ["house_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["room"]
+        "house_type": ["room"],
+        "ad_type": ["rentOut"]
       },
-      "required": false,
+      "required": true,
       "options": [
         { "value": "apartment", "label": "Квартира" },
         { "value": "hostel", "label": "Хостел" },
@@ -98,9 +104,10 @@
     "bed_capacity": {
       "label": "Количество спальных мест",
       "type": "radio",
-      "depends_on": ["ad_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "ad_type": ["rentIn"]
+        "ad_type": ["rentOut"],
+        "house_type": ["room"]
       },
       "required": false,
       "options": [
@@ -116,7 +123,7 @@
       "type": "number",
       "depends_on": ["house_type", "ad_type"],
       "visible_if": {
-        "house_type": ["apartment", "house"],
+        "house_type": ["apartment", "room", "house"],
         "ad_type": ["rentOut"]
       },
       "required": true,
@@ -125,25 +132,50 @@
     "price": {
       "label": "Цена",
       "type": "number",
-      "depends_on": ["house_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["apartment", "room", "house"]
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
       },
       "required": true,
       "placeholder": "Введите цену"
     },
+    "price_min": {
+      "label": "Цена от",
+      "type": "number",
+      "depends_on": ["house_type", "ad_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentIn"]
+      },
+      "required": true,
+      "placeholder": "От"
+    },
+    "price_max": {
+      "label": "Цена до",
+      "type": "number",
+      "depends_on": ["house_type", "ad_type"], 
+      "visible_if": {
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentIn"]
+      },
+      "required": true,
+      "placeholder": "До"
+    },
     "currency": {
       "label": "Валюта",
       "type": "radio",
-      "depends_on": ["house_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["apartment", "room", "house"]
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
       },
       "options": [
-        { "value": "₸", "label": "KZT" },
-        { "value": "$", "label": "USD" },
-        { "value": "₽", "label": "EUR" }
-      ]
+        { "value": "KZT", "label": "KZT" },
+        { "value": "USD", "label": "USD" },
+        { "value": "EUR", "label": "EUR" }
+      ],
+      "defaultValue": "KZT"
     },
     "deposit": {
       "label": "Депозит",
@@ -155,7 +187,8 @@
       "options": [
         { "value": true, "label": "Да" },
         { "value": false, "label": "Нет" }
-      ]
+      ],
+      "required": true
     },
     "deposit_value": {
       "label": "Размер депозита (%)",
@@ -170,7 +203,8 @@
         { "value": "30", "label": "30" },
         { "value": "40", "label": "40" },
         { "value": "50", "label": "50" }
-      ]
+      ],
+      "required": true
     },
     "floor_current": {
       "label": "Этаж",
@@ -202,7 +236,8 @@
         "house_type": ["apartment", "room", "house"]
       },
       "required": true,
-      "placeholder": "+7 777 777 77 77"
+      "placeholder": "+7 777 777 77 77",
+      "pattern": "\\+7\\s?\\d{3}\\s?\\d{3}\\s?\\d{2}\\s?\\d{2}"
     },
     "author": {
       "label": "Размещает объявление",
@@ -221,9 +256,10 @@
     "communication_method": {
       "label": "Способ связи",
       "type": "checkbox",
-      "depends_on": ["house_type"], 
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["apartment", "room", "house"]
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
       },
       "required": true,
       "options": [
@@ -243,12 +279,12 @@
     "description": {
       "label": "Описание",
       "type": "textarea",
-      "depends_on": ["house_type"], 
+      "depends_on": ["ad_type"],
       "visible_if": {
-        "house_type": ["apartment", "room", "house"]
+        "ad_type": ["rentOut"]
       },
       "required": true,
-      "placeholder": "Введите описание"
+      "placeholder": "Введите описание (не более 400 символов)"
     },
     "furniture": {
       "label": "Мебель",
@@ -263,7 +299,7 @@
         { "value": "sleeping_places", "label": "Спальные места" }
       ]
     },
-    "separated_toilet": {
+    "toilet": {
       "label": "Санузел",
       "type": "checkbox",
       "depends_on": ["ad_type"],
@@ -291,7 +327,7 @@
       "label": "Техника",
       "depends_on": ["ad_type"],
       "visible_if": {
-        "ad_type": ["rentOut", "rentIn"]
+        "ad_type": ["rentOut"]
       },
       "type": "checkbox",
       "options": [
@@ -302,7 +338,9 @@
         { "value": "washing_machine", "label": "Стиральная машина" },
         { "value": "dishwasher", "label": "Посудомоечная машина" },
         { "value": "tv", "label": "Телевизор" },
-        { "value": "iron", "label": "Утюг" }
+        { "value": "iron", "label": "Утюг" },
+        { "value": "dryer", "label": "Сушилка" },
+        { "value": "vacuum_cleaner", "label": "Пылесос" }
       ]
     },
     "internet_and_tv": {
@@ -310,7 +348,7 @@
       "type": "checkbox",
       "depends_on": ["ad_type"],
       "visible_if": {
-        "ad_type": ["rentOut", "rentIn"]
+        "ad_type": ["rentOut"]
       },
       "options": [
         { "value": "wifi", "label": "Wi-Fi" },
@@ -320,9 +358,10 @@
     "comfort": {
       "label": "Комфорт",
       "type": "checkbox",
-      "depends_on": ["ad_type"],
+      "depends_on": ["ad_type", "duration"],
       "visible_if": {
-        "ad_type": ["rentOut"]
+        "ad_type": ["rentOut"],
+        "duration": ["daily_rent"]
       },
       "options": [
         { "value": "bed_linen", "label": "Постельное белье" },
@@ -330,7 +369,7 @@
         { "value": "hygiene_items", "label": "Средства гигиены" }
       ]
     },
-    "apartment_condition": {
+    "condition": {
       "label": "Ремонт:",
       "type": "radio",
       "depends_on": ["ad_type"],
@@ -365,7 +404,7 @@
       "type": "radio",
       "depends_on": ["ad_type"],
       "visible_if": {
-        "ad_type": ["rentOut", "rentIn"]
+        "ad_type": ["rentOut"]
       },
       "required": false,
       "options": [
