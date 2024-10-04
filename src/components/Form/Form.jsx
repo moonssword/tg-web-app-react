@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import './Form.css';
 import { useTelegram } from '../../hooks/useTelegram';
-import citiesData from '../../dictionary/citiesData.json'; // Импортируем JSON файл
-import formData from '../../dictionary/formData.json';  // Дополнительные поля
-require('dotenv').config();
+import citiesData from '../../dictionary/citiesData.json';
+import formData from '../../dictionary/formData.json';
 
 const Form = () => {
     const [city, setCity] = useState('');
@@ -15,7 +14,7 @@ const Form = () => {
     const { tg, user, queryId } = useTelegram();
 
     const onSendData = useCallback(() => {
-        // Проверка обязательных полей
+
         /*const requiredFields = Object.keys(formData).filter(key => formData[key].required);
         const missingFields = requiredFields.filter(field => !formValues[field]);
     
@@ -24,15 +23,12 @@ const Form = () => {
             return;
         }*/
     
-        // Валидация полей
         const errors = [];
     
-        // Валидация поля description
         /*if (formValues.description && formValues.description.length > 1024) {
             errors.push('Описание не должно содержать более 1024 знаков');
         }
     
-        // Валидация полей, которые не могут быть отрицательными
         const numericFields = ['room_area', 'price', 'floor_current', 'floor_total', 'apartment_area'];
         numericFields.forEach(field => {
             if (formValues[field] < 0) {
@@ -40,13 +36,11 @@ const Form = () => {
             }
         });
     
-        // Валидация телефона
         const phoneRegex = /^\+?\d{1,4}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
         if (!phoneRegex.test(formValues.phone)) {
             errors.push('Введите корректный номер телефона');
         }*/
     
-        // Валидация tg_username
         if (formValues.tg_username && formValues.tg_username.length > 20) {
             errors.push('Telegram username не может содержать более 20 символов');
         }
@@ -69,7 +63,7 @@ const Form = () => {
             user,
         };
 
-        fetch(`https://${process.env.DOMAIN}/web-data`, {
+        fetch(`https://ibulat.space/web-data`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
