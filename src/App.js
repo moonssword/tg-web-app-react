@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import { useTelegram } from './hooks/useTelegram';
 import Header from './components/Header/Header';
 import { Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage/MainPage';
@@ -42,7 +41,7 @@ const App = () => {
     <div className="App">
       <Header />
       <Routes>
-        <Route index element={<MainPage />} />
+        <Route path="/" element={<MainPage />} />
         <Route path="form" element={<Form />} />
         <Route path="autosearch" element={<Autosearch />} />
       </Routes>
