@@ -6,6 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage/MainPage';
 import Form from './components/Form/Form';
 import Autosearch from './components/Autosearch/Autosearch';
+import { useTelegram } from '../../hooks/useTelegram';
 
 const App = () => {
   const { tg } = useTelegram();
