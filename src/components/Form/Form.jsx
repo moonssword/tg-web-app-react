@@ -15,14 +15,6 @@ const Form = () => {
 
     const onSendData = useCallback(() => {
 
-        const requiredFields = Object.keys(formData).filter(key => formData[key].required);
-        const missingFields = requiredFields.filter(field => !formValues[field]);
-    
-        if (missingFields.length > 0) {
-            alert(`Пожалуйста, заполните обязательные поля: ${missingFields.join(', ')}`);
-            return;
-        }
-    
         const errors = [];
     
         if (formValues.description && formValues.description.length > 400) {
