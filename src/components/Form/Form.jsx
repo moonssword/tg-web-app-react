@@ -15,31 +15,24 @@ const Form = () => {
 
     const onSendData = useCallback(() => {
 
-        /*const requiredFields = Object.keys(formData).filter(key => formData[key].required);
+        const requiredFields = Object.keys(formData).filter(key => formData[key].required);
         const missingFields = requiredFields.filter(field => !formValues[field]);
     
         if (missingFields.length > 0) {
             alert(`Пожалуйста, заполните обязательные поля: ${missingFields.join(', ')}`);
             return;
-        }*/
+        }
     
         const errors = [];
     
-        /*if (formValues.description && formValues.description.length > 1024) {
-            errors.push('Описание не должно содержать более 1024 знаков');
+        if (formValues.description && formValues.description.length > 400) {
+            errors.push('Описание не должно содержать более 400 знаков');
         }
-    
-        const numericFields = ['room_area', 'price', 'floor_current', 'floor_total', 'apartment_area'];
-        numericFields.forEach(field => {
-            if (formValues[field] < 0) {
-                errors.push(`${formData[field].label} не может быть отрицательным`);
-            }
-        });
     
         const phoneRegex = /^\+?\d{1,4}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
         if (!phoneRegex.test(formValues.phone)) {
             errors.push('Введите корректный номер телефона');
-        }*/
+        }
     
         if (formValues.tg_username && formValues.tg_username.length > 20) {
             errors.push('Telegram username не может содержать более 20 символов');
@@ -63,7 +56,7 @@ const Form = () => {
             user,
         };
 
-        fetch(`https://ibulat.space/web-data`, {
+        fetch(`https://bot.fatir.su/web-data`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,14 +100,14 @@ const Form = () => {
             )
         ||
         (formValues.ad_type === "rentOut" 
-            && city /*&& district && formValues.price 
+            && city && district && formValues.price 
             && formValues.address && formValues.ad_type && formValues.house_type && formValues.area
             && ((formValues.house_type === 'apartment') ? formValues.rooms : (formValues.room_type && formValues.room_location))
             && (formValues.deposit ? formValues.deposit_value : true)
             && formValues.floor_current && formValues.floor_total
             && formValues.phone && formValues.author && formValues.description && formValues.duration
             && (formValues.call || formValues.telegram || formValues.whatsapp)
-            && (formValues.family || formValues.single || formValues.with_child || formValues.with_pets)*/
+            && (formValues.family || formValues.single || formValues.with_child || formValues.with_pets)
         );/*&& formValues.condition != null*/;
     
         console.log(formValues)
