@@ -6,10 +6,15 @@ import { useTelegram } from '../../hooks/useTelegram';
 const MainPage = () => {
     return (
         <div className="main-page">
-            <h1></h1>
-            <Link to="/form">
-                <button className="navigate-button">Разместить объявление</button>
-            </Link>
+            <h1>Добро пожаловать!</h1>
+            <div className="button-container">
+                <Link to="/form">
+                    <button className="navigate-button">Разместить объявление</button>
+                </Link>
+                <Link to="/autosearch">
+                    <button className="navigate-button">Сохраненные поиски</button>
+                </Link>
+            </div>
         </div>
     );
 };

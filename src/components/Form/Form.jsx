@@ -92,14 +92,14 @@ const Form = () => {
             )
         ||
         (formValues.ad_type === "rentOut" 
-            && city && district && formValues.price 
+            && city && district /*&& formValues.price 
             && formValues.address && formValues.ad_type && formValues.house_type && formValues.area
             && ((formValues.house_type === 'apartment') ? formValues.rooms : (formValues.room_type && formValues.room_location))
             && (formValues.deposit ? formValues.deposit_value : true)
             && formValues.floor_current && formValues.floor_total
             && formValues.phone && formValues.author && formValues.description && formValues.duration
             && (formValues.call || formValues.telegram || formValues.whatsapp)
-            && (formValues.family || formValues.single || formValues.with_child || formValues.with_pets)
+            && (formValues.family || formValues.single || formValues.with_child || formValues.with_pets)*/
         );/*&& formValues.condition != null*/;
     
         console.log(formValues)
