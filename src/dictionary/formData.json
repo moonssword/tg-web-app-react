@@ -180,9 +180,10 @@
     "deposit": {
       "label": "Депозит",
       "type": "radio",
-      "depends_on": ["ad_type"], 
+      "depends_on": ["ad_type", "duration"], 
       "visible_if": {
-        "ad_type": ["rentOut"]
+        "ad_type": ["rentOut"],
+        "long_time": ["long_time"]
       },
       "options": [
         { "value": true, "label": "Да" },
