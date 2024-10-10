@@ -41,7 +41,7 @@ const deactivateSearch = async (criteriaId) => {
     try {
         console.log(`Deactivating search with criteriaId: ${criteriaId}`);
         
-        const response = await fetch(`${domain}/sc/${criteriaId}`, {
+        const response = await fetch(`${domain}/api/sc/${criteriaId}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

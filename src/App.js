@@ -6,6 +6,7 @@ import { Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage/MainPage'
 import Form from './components/Form/Form'
 import Autosearch from './components/Autosearch/Autosearch';
+import Ads from './components/Ads/Ads'
 
 function App() {
   const {tg, onToggleButton} = useTelegram();
@@ -21,6 +22,7 @@ function App() {
         <Route index element={<MainPage />}/>
         <Route path={'form'} element={<Form />}/>
         <Route path={'autosearch'} element={<Autosearch />}/>
+        <Route path={'ads'} element={<Ads />}/>
       </Routes>
     </div>
   );
