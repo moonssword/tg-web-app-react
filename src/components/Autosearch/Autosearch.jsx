@@ -19,7 +19,7 @@ const Autosearch = () => {
             const userId = user?.id;
             try {
                 setIsLoading(true); // Включаем анимацию загрузки перед началом запроса
-                const response = await fetch(`${domain}/sc?userId=${userId}`);
+                const response = await fetch(`${domain}/api/sc?userId=${userId}`);
                 const data = await response.json();
                 if (data && Array.isArray(data.searchCriteria)) {
                     setSearches(data.searchCriteria);

@@ -48,7 +48,7 @@ const Form = () => {
             user,
         };
 
-        fetch(`${process.env.REACT_APP_DOMAIN}/web-data`, {
+        fetch(`${process.env.REACT_APP_DOMAIN}/api/web-data`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
