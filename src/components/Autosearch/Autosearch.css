@@ -1,9 +1,17 @@
 .autosearch-container {
     padding: 20px;
     font-family: Arial, sans-serif;
-    max-width: auto;
     margin: auto;
+    background-color: var(--tg-theme-bg-color, #f9f9f9);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    color: var(--tg-theme-text-color, #333);
 }
+
+.no-searches-message {
+    color: var(--tg-theme-subtitle-text-color);
+    font-size: 16px;
+}
+
 
 .search-list {
     list-style-type: none;

@@ -48,7 +48,7 @@ const Form = () => {
             user,
         };
 
-        fetch(`https://bot.fatir.su/web-data`, {
+        fetch(`${process.env.REACT_APP_DOMAIN}/web-data`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

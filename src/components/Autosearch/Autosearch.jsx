@@ -3,7 +3,7 @@ import './Autosearch.css';
 import { useTelegram } from '../../hooks/useTelegram';
 
 const Autosearch = () => {
-    const domain = 'https://bot.fatir.su';
+    const domain = process.env.REACT_APP_DOMAIN;
     const { tg, user } = useTelegram();
     const [searches, setSearches] = useState([]);
     const [formData, setFormData] = useState({
@@ -21,7 +21,11 @@ const Autosearch = () => {
                 setIsLoading(true); // Включаем анимацию загрузки перед началом запроса
                 const response = await fetch(`${domain}/sc?userId=${userId}`);
                 const data = await response.json();
-                setSearches(data.searchCriteria);  // Исправлено получение данных
+                if (data && Array.isArray(data.searchCriteria)) {
+                    setSearches(data.searchCriteria);
+                } else {
+                    setSearches([]);
+                }
             } catch (error) {
                 console.error('Error fetching searches:', error);
             } finally {
@@ -94,7 +98,7 @@ const formatMessage = (data) => {
                         ))}
                     </ul>
                 ) : (
-                    <p>Пусто.</p>
+                    <p className="no-searches-message">Нет сохраненных поисков.</p>
                 )
             )}
         </div>
