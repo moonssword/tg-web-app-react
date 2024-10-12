@@ -171,11 +171,11 @@
         "ad_type": ["rentOut"]
       },
       "options": [
-        { "value": "KZT", "label": "KZT" },
-        { "value": "USD", "label": "USD" },
-        { "value": "EUR", "label": "EUR" }
+        { "value": "kzt", "label": "KZT" },
+        { "value": "usd", "label": "USD" },
+        { "value": "eur", "label": "EUR" }
       ],
-      "defaultValue": "KZT"
+      "defaultValue": "kzt"
     },
     "deposit": {
       "label": "Депозит",

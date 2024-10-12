@@ -163,14 +163,14 @@ const Form = () => {
             }
         }*/
 
-        if (field === 'ad_type') {
-            setAdType(value);
-        }
-
         setFormValues((prevValues) => ({
             ...prevValues,
             [field]: validatedValue
         }));
+
+        if (field === 'ad_type') {
+            setAdType(value);
+        }
     };
     
 
@@ -315,7 +315,7 @@ const Form = () => {
                                     id={`${key}_${option.value}`}
                                     name={key}
                                     value={option.value}
-                                    checked={formValues[key] === option.value || field.defaultValue === option.value}
+                                    checked={formValues[key] === option.value || (!formValues[key] && field.defaultValue === option.value)}
                                     onChange={(e) => onChangeField(key, option.value)}
                                     disabled={field.disabled || false} // поддержка disabled состояния
                                 />
@@ -332,7 +332,7 @@ const Form = () => {
         }
 
         if (key === "tg_username") {
-            field.defaultValue = user?.username || '';
+            field.placeholder = user?.username || '';
         }
 
         return (
