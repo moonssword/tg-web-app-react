@@ -31,7 +31,7 @@ const Ads = () => {
     }, [user]);
 
     // Функция для деактивации объявления и удаления из канала
-    const deactivateAd = async (adId, messageId, city, userId) => {
+    const deactivateAd = async (adId, messageId, city, userId, channelId) => {
         try {
             console.log(`Deactivating ad with id: ${adId}, message_id: ${messageId}, city: ${city}`);
             
@@ -44,7 +44,8 @@ const Ads = () => {
                     is_active: false,
                     message_id: messageId,
                     city: city,
-                    tg_user_id: userId
+                    tg_user_id: userId,
+                    tg_channel: channelId
                 }),
             });
 
@@ -62,7 +63,7 @@ const Ads = () => {
     };
 
     // Показать всплывающее окно для подтверждения удаления
-    const showConfirmDeletePopup = (adId, messageId, city, userId) => {
+    const showConfirmDeletePopup = (adId, messageId, city, userId, channelId) => {
         tg.showPopup({
             title: 'Подтверждение удаления',
             message: 'Вы уверены, что хотите удалить это объявление?',
@@ -72,23 +73,42 @@ const Ads = () => {
             ]
         }, (buttonId) => {
             if (buttonId === 'confirm') {
-                deactivateAd(adId, messageId, city, userId);
+                deactivateAd(adId, messageId, city, userId, channelId);
             }
         });
     };
 
     const formatAdMessage = (ad) => {
-        return `${ad.house_type === 'apartment' ? `${ad.rooms}-комн. квартира` : ad.house_type === 'room' ? 'Комната' : 'Дом'} 
-${ad.duration === 'long_time' ? 'на длительный срок' : 'посуточно'}
-Город: ${ad.city}${ad.district ? ', ' + ad.district + ' р-н' : ''}${ad.microdistrict ? ', ' + ad.microdistrict : ''}${ad.address ? ', ' + ad.address : ''}
-Цена: ${ad.price} ₸
-Телефон: ${ad.phone}
-`;
-    };
+        const tgChannel = ad.tg_channel ? ad.tg_channel.replace('@', '') : 'unknown_channel';
+        const messageId = Array.isArray(ad.message_id) && ad.message_id.length > 0 ? ad.message_id[0] : 'unknown_message';
+    
+        return (
+            <>
+                <a href={`https://t.me/${tgChannel}/${messageId}`} target="_blank" rel="noopener noreferrer">
+                    Объявление {ad.id}
+                </a>
+                <br />
+                {ad.house_type === 'apartment' ? `${ad.rooms}-комн. квартира` : ad.house_type === 'room' ? 'Комната' : 'Дом'} 
+                {ad.duration === 'long_time' ? ' на длительный срок' : ' посуточно'}
+                <br />
+                Адрес: {ad.city}
+                {ad.district ? `, ${ad.district} р-н` : ''}
+                {ad.microdistrict ? `, ${ad.microdistrict}` : ''}
+                {ad.address ? `, ${ad.address}` : ''}
+                <br />
+                Цена: {ad.price} ₸
+                <br />
+                Телефон: {ad.phone}
+                <br />
+            </>
+        );
+    };    
 
     return (
         <div className="ads-container">
-            <h1>Мои объявления</h1>
+            <div className="ads-header">
+                <h1>Мои объявления</h1>
+            </div>
             {isLoading ? (
                 <div className="loading-spinner">
                     <div className="spinner"></div>
@@ -105,7 +125,7 @@ ${ad.duration === 'long_time' ? 'на длительный срок' : 'посу
                                 <div className="ad-actions">
                                     <button 
                                         className="deactivate-button" 
-                                        onClick={() => showConfirmDeletePopup(ad.id, ad.message_id, ad.city, ad.tg_user_id)}
+                                        onClick={() => showConfirmDeletePopup(ad.id, ad.message_id, ad.city, ad.tg_user_id, ad.tg_channel)}
                                     >
                                         Удалить
                                     </button>

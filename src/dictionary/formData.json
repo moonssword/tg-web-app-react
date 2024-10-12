@@ -275,7 +275,8 @@
       "depends_on": ["telegram"],
       "visible_if": {"telegram": [true]},
       "required": true,
-      "placeholder": ""
+      "placeholder": "",
+      "defaultValue": ""
     },
     "description": {
       "label": "Описание",

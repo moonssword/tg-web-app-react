@@ -12,26 +12,27 @@ const Form = () => {
     const [microdistricts, setMicrodistricts] = useState([]);
     const [formValues, setFormValues] = useState({});
     const { tg, user, queryId } = useTelegram();
+    const [adType, setAdType] = useState(formValues?.ad_type || '');
 
     const onSendData = useCallback(() => {
 
         const errors = [];
     
         if (formValues.description && formValues.description.length > 400) {
-            errors.push('Описание не должно содержать более 400 знаков');
+            errors.push('⚠️ Описание не должно содержать больше 400 знаков');
         }
     
         const phoneRegex = /^\+?\d{1,4}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
         if (!phoneRegex.test(formValues.phone)) {
-            errors.push('Введите корректный номер телефона');
+            errors.push('⚠️ Введите корректный номер телефона');
         }
     
         if (formValues.tg_username && formValues.tg_username.length > 20) {
-            errors.push('Telegram username не может содержать более 20 символов');
+            errors.push('⚠️ Telegram username не может содержать более 20 символов');
         }
     
         if (errors.length > 0) {
-            alert(errors.join('\n'));
+            tg.showAlert(errors.join('\n'));
             return;
         }
     
@@ -70,6 +71,19 @@ const Form = () => {
         //tg.sendData(JSON.stringify(data));
     }, [city, district, microdistrict, formValues]);
     
+    useEffect(() => {
+        let buttonText = 'Опубликовать';
+    
+        if (adType === 'rentIn') {
+            buttonText = 'Подписаться';
+        } else if (adType === 'rentOut') {
+            buttonText = 'Опубликовать';
+        }
+    
+        tg.MainButton.setParams({
+            text: buttonText
+        });
+    }, [adType]);
 
     useEffect(() => {
         tg.onEvent('mainButtonClicked', onSendData);
@@ -77,12 +91,6 @@ const Form = () => {
             tg.offEvent('mainButtonClicked', onSendData);
         };
     }, [onSendData]);
-
-    useEffect(() => {
-        tg.MainButton.setParams({
-            text: 'Опубликовать'
-        });
-    }, []);
 
     useEffect(() => {
         // Проверяем, заполнены ли все необходимые поля
@@ -138,22 +146,26 @@ const Form = () => {
         // Валидация поля tg_username
         if (field === 'tg_username' && value.length > 32) {
             validatedValue = value.slice(0, 32); // Ограничиваем длину
-            alert('Telegram username не может содержать более 32 символов');
+            tg.showAlert('⚠️ Telegram username не может содержать более 32 символов');
         }
     
         // Валидация числовых полей, которые не могут быть отрицательными
         /*if (['price', 'floor_current', 'floor_total', 'area', 'phone'].includes(field)) {
             // Проверка на числовое значение
             if (isNaN(value) || value.trim() === '') {
-                alert(`${formData[field].label} должно быть числом`);
+                tg.showAlert(`${formData[field].label} должно быть числом`);
                 validatedValue = ''; // Или можете установить значение в null
             } else if (value < 0) {
                 validatedValue = 0; // Заменяем отрицательные значения на 0
-                alert(`${formData[field].label} не может быть отрицательным`);
+                tg.showAlert(`${formData[field].label} не может быть отрицательным`);
             } else {
                 validatedValue = Number(value); // Преобразуем строку в число, если это корректное значение
             }
         }*/
+
+        if (field === 'ad_type') {
+            setAdType(value);
+        }
 
         setFormValues((prevValues) => ({
             ...prevValues,
@@ -256,7 +268,7 @@ const Form = () => {
                         type={field.type}
                         className={'input'}
                         placeholder={field.placeholder}
-                        value={formValues[key] || ''}
+                        value={formValues[key] || field.defaultValue || ''}
                         onChange={(e) => onChangeField(key, e.target.value)}
                         pattern={field.pattern || ''}
                     />
@@ -320,7 +332,7 @@ const Form = () => {
         }
 
         if (key === "tg_username") {
-            field.placeholder = `@${user?.username || ''}`; // Подставляем username
+            field.defaultValue = user?.username || '';
         }
 
         return (
