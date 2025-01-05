@@ -40,7 +40,7 @@
         "ad_type": ["rentOut"]
       },
       "required": true,
-      "placeholder": "Введите улицу и № дома"
+      "placeholder": "Введите название улицы и № дома"
     },
     "duration": {
       "label": "Срок аренды ",

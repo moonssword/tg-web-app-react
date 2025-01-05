@@ -262,11 +262,23 @@ const Form = () => {
                 );
                 break;
             case 'text':
+                fieldElement = (
+                    <input
+                        type={field.type}
+                        className={'input'}
+                        placeholder={field.placeholder}
+                        value={formValues[key] || field.defaultValue || ''}
+                        onChange={(e) => onChangeField(key, e.target.value)}
+                        pattern={field.pattern || ''}
+                    />
+                );
+                break;
             case 'number':
                 fieldElement = (
                     <input
                         type={field.type}
                         className={'input'}
+                        inputmode="numeric"
                         placeholder={field.placeholder}
                         value={formValues[key] || field.defaultValue || ''}
                         onChange={(e) => onChangeField(key, e.target.value)}

@@ -32,19 +32,23 @@ h1 {
 
 .ad-item {
     padding: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     justify-content: space-between;
+    flex-wrap: wrap;
+    align-items: center;
 }
 
 .ad-text {
     margin-bottom: 10px;
+    max-width: calc(100% - 50px);
     word-wrap: break-word;
-    text-align: left;
+    overflow-wrap: break-word;
     white-space: pre-wrap;
+    text-align: left;
 }
 
 .ad-actions {
@@ -61,18 +65,16 @@ h1 {
     transition: background-color 0.3s ease;
 }
 
-.deactivate-button {
-    padding: 5px 15px;
-    background-color: #ff4d4d;
-    color: white;
-    border: none;
+.deactivate-button-ads {
+    padding: 5px;
+    background-color: transparent;
+    border: 1px solid #ff4d4d;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.deactivate-button:hover {
-    background-color: #ff1a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 .loading-spinner {
@@ -86,85 +88,22 @@ h1 {
     transform: translate(-50%, -50%);
 }
 
-.spinner {
-    width: 48px;
-    height: 48px;
-    display: inline-block;
-    position: relative;
-    transform: rotate(45deg);
-}
 
-.spinner::before {
-    content: '';
-    box-sizing: border-box;
-    width: 24px;
-    height: 24px;
-    position: absolute;
-    left: 0;
-    top: -24px;
-    animation: animloader 4s ease infinite;
-}
-
-.spinner::after {
-    content: '';
-    box-sizing: border-box;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 24px;
-    height: 24px;
-    background: rgba(255, 255, 255, 0.85);
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
-    animation: animloader2 2s ease infinite;
-}
-
-@keyframes animloader {
-    0% {
-        box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
-    }
-    12% {
-        box-shadow: 0 24px white, 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
-    }
-    25% {
-        box-shadow: 0 24px white, 24px 24px white, 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
-    }
-    37% {
-        box-shadow: 0 24px white, 24px 24px white, 24px 48px white, 0px 48px rgba(255, 255, 255, 0);
-    }
-    50% {
-        box-shadow: 0 24px white, 24px 24px white, 24px 48px white, 0px 48px white;
-    }
-    62% {
-        box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px white, 24px 48px white, 0px 48px white;
-    }
-    75% {
-        box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px white, 0px 48px white;
-    }
-    87% {
-        box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px white;
-    }
-    100% {
-        box-shadow: 0 24px rgba(255, 255, 255, 0), 24px 24px rgba(255, 255, 255, 0), 24px 48px rgba(255, 255, 255, 0), 0px 48px rgba(255, 255, 255, 0);
-    }
-}
-
-@keyframes animloader2 {
-    0% {
-        transform: translate(0, 0) rotateX(0) rotateY(0);
-    }
-    25% {
-        transform: translate(100%, 0) rotateX(0) rotateY(180deg);
-    }
-    50% {
-        transform: translate(100%, 100%) rotateX(-180deg) rotateY(180deg);
-    }
-    75% {
-        transform: translate(0, 100%) rotateX(-180deg) rotateY(360deg);
-    }
-    100% {
-        transform: translate(0, 0) rotateX(0) rotateY(360deg);
-    }
-}
+.loader {
+    width: 50px;
+    --b: 8px; 
+    aspect-ratio: 1;
+    border-radius: 50%;
+    padding: 1px;
+    background: conic-gradient(#0000 10%,#f03355) content-box;
+    -webkit-mask:
+      repeating-conic-gradient(#0000 0deg,#000 1deg 20deg,#0000 21deg 36deg),
+      radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
+    -webkit-mask-composite: destination-in;
+            mask-composite: intersect;
+    animation:l4 1s infinite steps(10);
+  }
+  @keyframes l4 {to{transform: rotate(1turn)}}
 
 p {
     margin-top: 10px;
