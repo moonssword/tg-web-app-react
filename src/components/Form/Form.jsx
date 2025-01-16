@@ -3,6 +3,7 @@ import './Form.css';
 import { useTelegram } from '../../hooks/useTelegram';
 import citiesData from '../../dictionary/citiesData.json';
 import formData from '../../dictionary/formData.json';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Form = () => {
     const [city, setCity] = useState('');
@@ -11,9 +12,12 @@ const Form = () => {
     const [districts, setDistricts] = useState([]);
     const [microdistricts, setMicrodistricts] = useState([]);
     const [formValues, setFormValues] = useState({});
-    const { tg, user, queryId } = useTelegram();
+    const { tg, user, queryId, onBackButton, hideBackButton } = useTelegram();
     const [adType, setAdType] = useState(formValues?.ad_type || '');
+    const location = useLocation();
+    const navigate = useNavigate();
 
+    // Отправка на публикацию
     const onSendData = useCallback(() => {
 
         const errors = [];
@@ -23,7 +27,7 @@ const Form = () => {
         }
     
         const phoneRegex = /^\+?\d{1,4}[-.\s]?\(?\d{1,3}\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}$/;
-        if (!phoneRegex.test(formValues.phone)) {
+        if (!phoneRegex.test(formValues.phone) && adType === 'rentOut') {
             errors.push('⚠️ Введите корректный номер телефона');
         }
     
@@ -35,56 +39,138 @@ const Form = () => {
             tg.showAlert(errors.join('\n'));
             return;
         }
-    
-        const urlParams = new URLSearchParams(window.location.search);
-        const chatId = urlParams.get('chat_id');
 
+        const initData = tg.initData;
         const data = {
             city,
             district,
             microdistrict,
             ...formValues,
-            queryId,
-            chatId,
-            user,
+            initData,
         };
 
-        fetch(`${process.env.REACT_APP_DOMAIN}/api/web-data`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify(data)
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => console.log(data))
-        .catch(error => console.error('There has been a problem with your fetch operation:', error));
-        
+        if (adType === 'rentOut') {
+            // Логика для публикации объявления
+            fetch(`${process.env.REACT_APP_DOMAIN}/api/web-data`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then((data) => console.log(data))
+                .catch((error) => console.error('There has been a problem with your fetch operation:', error));
+        } else if (adType === 'rentIn') {
+            // Логика для перехода на страницу поиска
+            const queryParams = new URLSearchParams({
+                city,
+                district,
+                microdistrict,
+                ...formValues,
+            }).toString();
     
-        console.log(data)
-        //tg.sendData(JSON.stringify(data));
-    }, [city, district, microdistrict, formValues]);
-    
-    useEffect(() => {
-        let buttonText = 'Опубликовать';
-    
-        if (adType === 'rentIn') {
-            buttonText = 'Подписаться';
-        } else if (adType === 'rentOut') {
-            buttonText = 'Опубликовать';
+            navigate(`/search_results?${queryParams}`);
+            tg.MainButton.hide();
+            tg.SecondaryButton.hide();
         }
+    }, [adType, city, district, microdistrict, formValues, tg, navigate]);
     
-        tg.MainButton.setParams({
-            text: buttonText
-        });
+    // Навигация
+    useEffect(() => {
+        if (location.state?.from === 'main') {
+            onBackButton(() => navigate(-1));
+        }
+
+        return () => {
+            hideBackButton();
+        };
+    }, [location.state, navigate]);
+    
+    // Кнопка Опубликовать/Найти
+    useEffect(() => {
+        if (adType === 'rentIn') {
+            tg.MainButton.setParams({
+                text: 'Найти',
+            });
+            tg.MainButton.show();
+    
+            tg.SecondaryButton.setParams({
+                position: 'top',
+                text: 'Добавить поиск в избранное',
+            });
+        } else {
+            tg.MainButton.setParams({
+                text: 'Опубликовать',
+            });
+            tg.SecondaryButton.hide();
+        }
     }, [adType]);
 
+    // Кнопка добавить поиск в избранное
+    useEffect(() => {
+        const onHeartClick = () => {
+            tg.showPopup({
+                title: '🔖 Добавить в избранное',
+                message: 'Мы сохраним настройки фильтров и сообщим о новых объявлениях',
+                buttons: [
+                    { id: 'confirm', type: 'default', text: 'Добавить' },
+                    { id: 'cancel', type: 'destructive', text: 'Отмена' }
+                ]
+            }, async (buttonId) => {
+                if (buttonId === 'confirm') {
+                    // Данные для отправки на сервер
+                    const initData = tg.initData;
+                    const data = {
+                        city,
+                        district,
+                        microdistrict,
+                        ...formValues,
+                        initData,
+                    };
+    
+                    try {
+                        const response = await fetch(
+                            `${process.env.REACT_APP_DOMAIN}/api/favorites`,
+                            {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify(data)
+                            }
+                        );
+    
+                        if (response.ok) {
+                            const result = await response.json();
+                            tg.showAlert('✔️ Поиск добавлен в избранное');
+                            tg.SecondaryButton.hide();
+                            console.log('Добавлено в избранное:', result);
+                        } else {
+                            console.error('Ошибка при добавлении в избранное:', response.statusText);
+                            tg.showAlert('⚠️ Не удалось добавить поиск в избранное. Попробуйте позже.');
+                        }
+                    } catch (error) {
+                        console.error('Ошибка:', error);
+                        tg.showAlert('⚠️ Произошла ошибка. Попробуйте позже.');
+                    }
+                }
+            });
+        };
+    
+        tg.onEvent('secondaryButtonClicked', onHeartClick);
+        return () => {
+            tg.offEvent('secondaryButtonClicked', onHeartClick);
+        };
+    }, [tg, city, district, microdistrict, formValues]);
+
+    // Нажатие MainButton
     useEffect(() => {
         tg.onEvent('mainButtonClicked', onSendData);
         return () => {
@@ -92,11 +178,12 @@ const Form = () => {
         };
     }, [onSendData]);
 
+    // Валидация полей
     useEffect(() => {
         // Проверяем, заполнены ли все необходимые поля
         const isFormValid = 
         (formValues.ad_type === "rentIn" && formValues.house_type && city && formValues.price_min && formValues.price_max && formValues.duration
-            && ((formValues.house_type === 'apartment') ? formValues.rooms : true) && formValues.phone
+            && ((formValues.house_type === 'apartment') ? formValues.rooms : true)
             )
         ||
         (formValues.ad_type === "rentOut" 
@@ -111,12 +198,14 @@ const Form = () => {
         );/*&& formValues.condition != null*/;
     
         console.log(formValues)
-        console.log(isFormValid)
+        console.log('isFormValid ' + isFormValid)
 
         if (!isFormValid) {
             tg.MainButton.hide();
+            tg.SecondaryButton.hide();
         } else {
             tg.MainButton.show();
+            if (formValues.ad_type === "rentIn") tg.SecondaryButton.show();
         }
     }, [city, district, microdistrict, formValues]);
     
@@ -149,20 +238,6 @@ const Form = () => {
             tg.showAlert('⚠️ Telegram username не может содержать более 32 символов');
         }
     
-        // Валидация числовых полей, которые не могут быть отрицательными
-        /*if (['price', 'floor_current', 'floor_total', 'area', 'phone'].includes(field)) {
-            // Проверка на числовое значение
-            if (isNaN(value) || value.trim() === '') {
-                tg.showAlert(`${formData[field].label} должно быть числом`);
-                validatedValue = ''; // Или можете установить значение в null
-            } else if (value < 0) {
-                validatedValue = 0; // Заменяем отрицательные значения на 0
-                tg.showAlert(`${formData[field].label} не может быть отрицательным`);
-            } else {
-                validatedValue = Number(value); // Преобразуем строку в число, если это корректное значение
-            }
-        }*/
-
         setFormValues((prevValues) => ({
             ...prevValues,
             [field]: validatedValue
@@ -203,7 +278,7 @@ const Form = () => {
                         <div className="form-label">Город</div>
                         <div className="form-element">
                             <select className="select" value={city} onChange={onChangeCity}>
-                                <option value="">Выберите город</option>
+                                <option value="" disabled hidden>Выберите город</option>
                                 {Object.keys(citiesData).map(cityName => (
                                     <option key={cityName} value={cityName}>{cityName}</option>
                                 ))}
@@ -278,7 +353,7 @@ const Form = () => {
                     <input
                         type={field.type}
                         className={'input'}
-                        inputmode="numeric"
+                        inputMode="numeric"
                         placeholder={field.placeholder}
                         value={formValues[key] || field.defaultValue || ''}
                         onChange={(e) => onChangeField(key, e.target.value)}
@@ -286,6 +361,18 @@ const Form = () => {
                     />
                 );
                 break;
+            case 'tel':
+                    fieldElement = (
+                        <input
+                            type="tel"
+                            className={'input'}
+                            placeholder={field.placeholder}
+                            value={formValues[key] || field.defaultValue || ''}
+                            onChange={(e) => onChangeField(key, e.target.value)}
+                            pattern={field.pattern || ''}
+                        />
+                    );
+                    break;
             case 'textarea':
                 fieldElement = (
                     <textarea
@@ -359,8 +446,7 @@ const Form = () => {
 
     return (
         <div className={"form"}>
-        <h3>Новое объявление</h3>
-
+        {/* <h3>Новое объявление</h3> */}
             {/* Динамическая генерация дополнительных полей из JSON */}
             {Object.keys(formData).map((key) => {
                 const fieldElement = renderField(key, formData[key]);

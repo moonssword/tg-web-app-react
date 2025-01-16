@@ -1,20 +1,44 @@
 import React, { useEffect, useState } from 'react';
 import './Ads.css';
 import { useTelegram } from '../../hooks/useTelegram';
+import { useNavigate, useLocation  } from 'react-router-dom';
 
 const Ads = () => {
     const domain = process.env.REACT_APP_DOMAIN;
-    const { tg, user } = useTelegram();
+    const { tg, user, onBackButton, hideBackButton } = useTelegram();
     const [ads, setAds] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
+        if (location.state?.from === 'main') {
+            onBackButton(() => navigate(-1));
+        }
+
+        return () => {
+            hideBackButton();
+        };
+    }, [location.state, navigate]);
+    
+    // Отправка запроса на получение объявлений пользователя
+    useEffect(() => {
         const fetchAds = async () => {
-            const userId = user?.id;
             try {
                 setIsLoading(true); // Включаем анимацию загрузки перед началом запроса
-                const response = await fetch(`${domain}/api/ads?userId=${userId}`);
+
+                const initData = tg.initData; 
+
+                const response = await fetch(`${domain}/api/ads`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ initData }),
+                });
+
                 const data = await response.json();
+
                 if (data && Array.isArray(data.ads)) {
                     setAds(data.ads);
                 } else {
@@ -33,19 +57,22 @@ const Ads = () => {
     // Функция для деактивации объявления и удаления из канала
     const deactivateAd = async (adId, messageId, city, userId, channelId) => {
         try {
+            const initData = tg.initData;
             console.log(`Deactivating ad with id: ${adId}, message_id: ${messageId}, city: ${city}`);
             
-            const response = await fetch(`${domain}/api/ads/${adId}`, {
+            const response = await fetch(`${domain}/api/ads/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ 
+                    ad_id: adId,
                     is_active: false,
                     message_id: messageId,
                     city: city,
                     tg_user_id: userId,
-                    tg_channel: channelId
+                    tg_channel: channelId,
+                    initData: initData,
                 }),
             });
 
@@ -65,11 +92,11 @@ const Ads = () => {
     // Показать всплывающее окно для подтверждения удаления
     const showConfirmDeletePopup = (adId, messageId, city, userId, channelId) => {
         tg.showPopup({
-            title: 'Подтверждение удаления',
-            message: 'Вы уверены, что хотите удалить это объявление?',
+            title: '🗑️ Удалить объявление?',
+            message: 'Объявление не будет удалено из канала, если прошло более 48 часов. Оно будет скрыто из поиска',
             buttons: [
-                { id: 'confirm', type: 'default', text: 'Да' },
-                { id: 'cancel', type: 'destructive', text: 'Отмена' }
+                { id: 'confirm', type: 'destructive', text: 'Удалить' },
+                { id: 'cancel', type: 'default', text: 'Отмена' }
             ]
         }, (buttonId) => {
             if (buttonId === 'confirm') {
@@ -79,14 +106,24 @@ const Ads = () => {
     };
 
     const formatAdMessage = (ad) => {
+        console.log(ad)
         const tgChannel = ad.tg_channel ? ad.tg_channel.replace('@', '') : 'unknown_channel';
         const messageId = Array.isArray(ad.message_id) && ad.message_id.length > 0 ? ad.message_id[0] : 'unknown_message';
-    
+        const formattedDate = ad.tg_posted_date 
+        ? new Date(ad.tg_posted_date).toLocaleDateString('ru-RU', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric'
+        })
+        : '';
+
         return (
             <>
-                <strong><a href={`https://t.me/${tgChannel}/${messageId}`} target="_blank" rel="noopener noreferrer">
-                    Объявление {ad.id}
-                </a></strong>
+                <strong>
+                    <a href={`https://t.me/${tgChannel}/${messageId}`} target="_blank" rel="noopener noreferrer">
+                        Объявление №{ad.id}{formattedDate ? ` от ${formattedDate}` : ''}
+                    </a>
+                </strong>
                 <br />
                 <br />
                 {ad.house_type === 'apartment' ? `${ad.rooms}-комн. квартира` : ad.house_type === 'room' ? 'Комната' : 'Дом'} 
@@ -140,7 +177,7 @@ const Ads = () => {
                         ))}
                     </ul>
                 ) : (
-                    <p className="no-ads-message">Нет активных объявлений.</p>
+                    <p className="no-ads-message">Нет активных объявлений</p>
                 )
             )}
         </div>

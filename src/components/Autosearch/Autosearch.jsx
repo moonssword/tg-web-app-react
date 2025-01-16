@@ -1,25 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import './Autosearch.css';
 import { useTelegram } from '../../hooks/useTelegram';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Autosearch = () => {
     const domain = process.env.REACT_APP_DOMAIN;
-    const { tg, user } = useTelegram();
+    const { tg, user, onBackButton, hideBackButton } = useTelegram();
     const [searches, setSearches] = useState([]);
-    const [formData, setFormData] = useState({
-        city: '',
-        price_min: '',
-        price_max: '',
-        room_type: ''
-    });
     const [isLoading, setIsLoading] = useState(true);
-    
+    const location = useLocation();
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        if (location.state?.from === 'main') {
+            onBackButton(() => navigate(-1));
+        }
+
+        return () => {
+            hideBackButton();
+        };
+    }, [location.state, onBackButton, hideBackButton, navigate]);
+
     useEffect(() => {
         const fetchSearches = async () => {
             const userId = user?.id;
             try {
                 setIsLoading(true); // Включаем анимацию загрузки перед началом запроса
-                const response = await fetch(`${domain}/api/sc?userId=${userId}`);
+                const initData = tg.initData;
+                const response = await fetch(`${domain}/api/sc`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ initData }),
+                });
+
                 const data = await response.json();
                 if (data && Array.isArray(data.searchCriteria)) {
                     setSearches(data.searchCriteria);
@@ -39,14 +54,19 @@ const Autosearch = () => {
     // Функция для деактивации критерия
     const deactivateSearch = async (criteriaId) => {
         try {
+            const initData = tg.initData;
             console.log(`Deactivating search with criteriaId: ${criteriaId}`);
             
-            const response = await fetch(`${domain}/api/sc/${criteriaId}`, {
+            const response = await fetch(`${domain}/api/sc/`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ is_active: false }), // Передаем поле для деактивации
+                body: JSON.stringify({
+                    criteria_id: criteriaId,
+                    is_active: false,
+                    initData: initData,
+                }),
             });
 
             const result = await response.json();
@@ -65,11 +85,11 @@ const Autosearch = () => {
     // Показать всплывающее окно для подтверждения удаления
     const showConfirmDeletePopup = (criteriaId) => {
         tg.showPopup({
-            title: 'Подтверждение удаления',
-            message: 'Вы уверены, что хотите удалить поиск?',
+            title: '🗑️ Удалить поиск?',
+            message: 'Вы не будете получать уведомления о новых объявлениях',
             buttons: [
-                { id: 'confirm', type: 'default', text: 'Да' },
-                { id: 'cancel', type: 'destructive', text: 'Отмена' }
+                { id: 'confirm', type: 'destructive', text: 'Удалить' },
+                { id: 'cancel', type: 'default', text: 'Отмена' }
             ]
         }, (buttonId) => {
             if (buttonId === 'confirm') {
@@ -105,7 +125,7 @@ const Autosearch = () => {
     
     return (
         <div className="autosearch-container">
-            <h1>Сохраненные поиски</h1>
+            {/* <h1>Сохраненные поиски</h1> */}
             {isLoading ? ( // Отображаем анимацию загрузки, пока идет запрос
             <div className="loading-spinner">
                 <div className="loader"></div> {/* Анимация загрузки */}
@@ -136,7 +156,14 @@ const Autosearch = () => {
                         ))}
                     </ul>
                 ) : (
-                    <p className="no-searches-message">Нет сохраненных поисков.</p>
+                    <div className="no-searches-container">
+                    <p className="no-searches-message">Сохраните параметры поиска и будьте в курсе новых объявлений</p>
+                    <img 
+                        src="/save_search_button.png" 
+                        alt="Add search button" 
+                        className="how-save-ad-image" 
+                    />
+                </div>
                 )
             )}
         </div>

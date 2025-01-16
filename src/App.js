@@ -7,12 +7,14 @@ import MainPage from './components/MainPage/MainPage'
 import Form from './components/Form/Form'
 import Autosearch from './components/Autosearch/Autosearch';
 import Ads from './components/Ads/Ads'
+import SearchResults from './components/SearchResults/SearchResults'
 
 function App() {
   const {tg, onToggleButton} = useTelegram();
 
   useEffect(() => {
     tg.ready();
+    tg.expand()
   }, [])
 
   return (
@@ -23,6 +25,7 @@ function App() {
         <Route path={'form'} element={<Form />}/>
         <Route path={'autosearch'} element={<Autosearch />}/>
         <Route path={'ads'} element={<Ads />}/>
+        <Route path={'search_results'} element={<SearchResults />}/>
       </Routes>
     </div>
   );

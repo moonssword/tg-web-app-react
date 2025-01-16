@@ -7,12 +7,6 @@
     color: var(--tg-theme-text-color, #333);
 }
 
-.no-searches-message {
-    color: var(--tg-theme-subtitle-text-color);
-    font-size: 16px;
-}
-
-
 .search-list {
     list-style-type: none;
     padding: 0;
@@ -52,25 +46,6 @@
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.loading-spinner {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    margin-top: 20px;
-}
-
 p {
     margin-top: 10px;
     font-family: Arial, sans-serif;
@@ -78,18 +53,21 @@ p {
     color: #333;
 }
 
-.loader {
-    width: 50px;
-    --b: 8px; 
-    aspect-ratio: 1;
-    border-radius: 50%;
-    padding: 1px;
-    background: conic-gradient(#0000 10%,#f03355) content-box;
-    -webkit-mask:
-      repeating-conic-gradient(#0000 0deg,#000 1deg 20deg,#0000 21deg 36deg),
-      radial-gradient(farthest-side,#0000 calc(100% - var(--b) - 1px),#000 calc(100% - var(--b)));
-    -webkit-mask-composite: destination-in;
-            mask-composite: intersect;
-    animation:l4 1s infinite steps(10);
-  }
-  @keyframes l4 {to{transform: rotate(1turn)}}
+.no-searches-container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.no-searches-message {
+    font-size: 18px;
+    color: var(--tg-theme-subtitle-text-color, #777);
+    margin-bottom: 20px;
+}
+
+.how-save-ad-image {
+    max-width: 70%;
+    height: auto;
+    border-radius: 8px;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

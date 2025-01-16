@@ -231,14 +231,16 @@
     },
     "phone": {
       "label": "Телефон",
-      "type": "number",
-      "depends_on": ["house_type"], 
+      "type": "tel",
+      "depends_on": ["house_type", "ad_type"], 
       "visible_if": {
-        "house_type": ["apartment", "room", "house"]
+        "house_type": ["apartment", "room", "house"],
+        "ad_type": ["rentOut"]
       },
       "required": true,
       "placeholder": "+7 777 777 77 77",
-      "pattern": "\\+7\\s?\\d{3}\\s?\\d{3}\\s?\\d{2}\\s?\\d{2}"
+      "pattern": "\\+7\\s?\\d{3}\\s?\\d{3}\\s?\\d{2}\\s?\\d{2}",
+      "defaultValue": "+7"
     },
     "author": {
       "label": "Размещает объявление",

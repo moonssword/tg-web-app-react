@@ -24,8 +24,8 @@ h3 {
 .form-label {
     margin-bottom: 5px; /* Отступ между меткой и полем */
     color: var(--tg-theme-text-color, #333); /* Цвет текста заголовка */
-
-    font-weight: bold; /* Опционально, чтобы выделить метку */
+    font-size: 14px;
+    /* font-weight: lighter; /* Опционально, чтобы выделить метку */
 }
 
 .form-element {
@@ -40,6 +40,19 @@ h3 {
     border: 1px solid #ccc; /* Обводка поля */
     border-radius: 4px; /* Закругление углов */
     appearance: none; /* Убираем стандартный стиль браузера */
+    font-size: 16px;
+}
+
+.select {
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath fill='%23999' d='M5 6L0 0h10z'/%3E%3C/svg%3E")
+    no-repeat right 10px center;
+    background-color: #fff; /* Цвет фона */
+    background-size: 10px 6px;
+}
+
+.input:placeholder-shown,
+.textarea:placeholder-shown {
+    font-size: 14px; /* Размер шрифта для placeholder */
 }
 
 .checkbox-label,
